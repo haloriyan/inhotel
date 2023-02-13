@@ -1,0 +1,40 @@
+.TopBar {
+    position: fixed;
+    top: 20px;left: 0px;right: 0px;
+    height: 55px;
+    z-index: 2;
+    transition: 0.4s;
+}
+.TopBar.active {
+    top: 0px;
+    padding: 15px 0px;
+    height: 45px;
+}
+.TopBar form { width: 50%; }
+.TopBar input {
+    margin: 0px;
+    background: none;
+    display: flex;
+    flex-basis: 50%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    border: none;
+    color: #fff;
+}
+.TopBar button {
+    padding: 0px;
+    height: auto;
+    background: none;
+    display: flex;
+    margin-right: 10px;
+    flex-shrink: 1;
+    color: #fff;
+}
+
+@media (max-width: 480px) {
+    .TopBar {
+        top: 0px;
+        padding: 10px 0px;
+    }
+    .TopBar form { width: 75%; }
+}

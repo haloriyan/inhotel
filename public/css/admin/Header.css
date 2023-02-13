@@ -1,0 +1,61 @@
+.header {
+    position: fixed;
+    top: 0px;left: 0px;right: 0px;
+    height: 65px;
+    z-index: 10;
+}
+.header .logo {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+.header .title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.header .SearchForm {
+    background-color: var(--primaryDark);
+    font-size: 14px;
+}
+.header .SearchForm button {
+    background: none;
+    border: none;
+    color: #fff;
+    width: auto;
+    height: auto;
+    padding: 0px;
+}
+.header .SearchForm input {
+    margin: 0px;
+    padding: 0px;
+    font-size: 13px;
+    background: none;
+    outline: none;
+    border: none;
+    height: 40px;
+    margin-left: 10px;
+    color: #fff;
+    width: 87%;
+    font-weight: 600;
+}
+.header .SearchForm input::placeholder {
+    color: #eee;
+}
+
+.header nav a {
+    color: #fff;
+    text-decoration: none;
+}
+.header nav .item {
+    width: 45px;
+    height: 45px;
+    border-radius: 99px;
+    background-color: var(--primaryDark);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}

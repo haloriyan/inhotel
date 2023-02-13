@@ -1,0 +1,71 @@
+button.blue { background-color: var(--blue); }
+button.blue:hover { background-color: var(--blueDark); }
+button.red { background-color: var(--red); }
+button.red:hover { background-color: var(--redDark); }
+button.yellow { background-color: var(--yellow); }
+button.yellow:hover { background-color: var(--yellowDark); }
+button.orange { background-color: var(--orange);color: #fff; }
+button.orange:hover { background-color: var(--orangeDark); }
+button.primary { background-color: var(--primary); }
+button.primary:hover { background-color: var(--primaryDark); }
+button.secondary {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    background: none;
+}
+button.secondary:hover {
+    background-color: var(--primary);
+    color: #fff;
+}
+
+button {
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    padding: 15px 30px;
+    transition: 0.3s;
+    font-size: 100%;
+}
+button.bg-none { background: none; }
+button.big { 
+    padding: 20px 40px;
+    font-size: 120%;
+}
+
+button.small {
+    padding: 10px 25px;
+    font-size: 16px;
+}
+button.FAB {
+    position: fixed;
+    bottom: 5%;right: 2.5%;
+    width: 60px;
+    height: 60px;
+    border-radius: 900px;
+    text-align: center;
+    padding: 0px;
+    z-index: 2;
+}
+
+.switch {
+    background-color: #ddd;
+    height: 30px;
+    width: 50px;
+    border-radius: 999px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0px 5px;
+    cursor: pointer;
+}
+.switch.on {
+    background-color: var(--green);
+    justify-content: flex-end;
+}
+.switch div {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background-color: #fff;
+}

@@ -1,0 +1,35 @@
+.alert {
+    position: fixed;
+    top: 0px;left: 0px;right: 0px;bottom: 0px;
+    background-color: #00000030;
+    z-index: 333;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.alert-content {
+    background-color: #fff;
+    width: 400px;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+.alert-icon {
+    width: 100px;
+    height: 100px;
+    font-size: 28px;
+    margin: auto;
+    border-radius: 999px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.alert-close {
+    position: absolute;
+    top: 25px;right: 25px;
+    cursor: pointer;
+    font-size: 24px;
+}

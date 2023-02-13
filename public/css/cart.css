@@ -1,0 +1,16 @@
+.content {
+    position: absolute;
+    top: 75px;left: 25%;right: 25%;
+}
+
+.product-item {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+}
+.product-image {
+    height: 125px;
+    aspect-ratio: 1;
+}
+.product-info {
+    margin-left: 20px;
+}

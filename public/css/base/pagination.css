@@ -1,0 +1,25 @@
+ul.pagination {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0px;
+    align-items: center;
+    justify-content: center;
+}
+ul.pagination a {
+    color: var(--blue);
+}
+
+ul.pagination li {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    font-size: 19px;
+}
+ul.pagination li.active {
+    background-color: var(--blue);
+    color: #fff;
+}

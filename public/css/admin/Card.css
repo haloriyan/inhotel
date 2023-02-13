@@ -1,0 +1,27 @@
+.card .icon {
+    background-color: var(--primaryTransparent);
+    color: var(--primary);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    font-size: 22px;
+    margin-right: 15px;
+}
+.card h3 {
+    margin: 0px;
+    font-size: 28px;
+}
+.card .action {
+    margin-top: 15px;
+    font-size: 13px;
+}
+.card .action a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}

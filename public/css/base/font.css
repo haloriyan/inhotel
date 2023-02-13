@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+a {
+    text-decoration: none;
+}
+h2,h3,h4,h5,h6 {
+    transition: 0.3s;
+}
+
+.text.bold { font-weight: 700; }
+.text.normal { font-weight: 500; }
+/* .text.transparent { color: #888;opacity: 1; } */
+.text.underline { text-decoration: underline; }
+.text.weight-300 { font-weight: 300; }
+.text.weight-400 { font-weight: 400; }
+.text.weight-600 { font-weight: 600; }
+.text.weight-700 { font-weight: 700; }
+.text.weight-800 { font-weight: 800; }
+
+.text.big { font-size: 120%; }
+.text.bigger { font-size: 200%; }
+.text.smaller { font-size: 90%; }
+.text.small { font-size: 80%; }
+.text.small-2 { font-size: 60%; }
+.text.capitalize { text-transform: capitalize; }
+
+.text.size-24 { font-size: 24px; }
+.text.size-28 { font-size: 28px; }
+.text.size-32 { font-size: 32px; }
+.text.size-36 { font-size: 36px; }
+.text.size-38 { font-size: 38px; }
+.text.size-42 { font-size: 42px; }
+
+.text.left { text-align: left; }
+.text.center { text-align: center; }
+.text.right { text-align: right; }
+
+.lh-25 { line-height: 25px; }
+.lh-30 { line-height: 30px; }
+.lh-35 { line-height: 35px; }
+.lh-40 { line-height: 40px; }
+
+pre {
+    font-size: 16px;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    line-height: 24px;
+}

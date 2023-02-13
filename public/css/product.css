@@ -1,0 +1,17 @@
+.content {
+    position: absolute;
+    top: 75px;left: 25%;right: 25%;
+}
+
+.ImagesArea {
+    white-space: nowrap;
+    height: 150px;
+    overflow-x: auto;
+}
+.ImagesArea img {
+    height: 98%;
+    aspect-ratio: 16 / 9;
+    border-radius: 7px;
+    margin-right: 10px;
+    object-fit: cover;
+}

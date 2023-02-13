@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+
+body { 
+    font-family: 'Poppins', sans-serif;
+}
+
+.LeftPanel {
+    position: fixed;
+    top: 100px;left: 2.5%;bottom: 5%;
+    width: 20%;
+    background-color: #8899FC;
+    border-radius: 8px;
+}
+.LeftPanel li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 30px;
+    height: 55px;
+    color: #fff;
+    font-size: 12px;
+}
+.LeftPanel li .icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 150%;
+}
+.LeftPanel li.active {
+    background-color: var(--primary);
+}
+.LeftPanel li.active .icon {
+    background-color: #fff;
+    color: var(--primary);
+    border-radius: 999px;
+    margin-right: 20px;
+}
+
+.TopBar {
+    position: fixed;
+    top: 0px;left: 0%;right: 0%;
+    height: 80px;
+    background-color: #fff;
+}
+
+.content {
+    position: absolute;
+    top: 100px;right: 2.5%;
+    left: 25%;
+}
