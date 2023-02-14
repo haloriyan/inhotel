@@ -12,6 +12,9 @@ Route::get('config/{key}', "UserController@getConfig");
 Route::group(['prefix' => "visitor"], function () {
     Route::post('login', "VisitorController@login")->name('visitor.login');
     Route::post('/', "VisitorController@load");
+    Route::post('cart', "VisitorController@cart");
+    Route::post('cart-quantity', "VisitorController@cartQuantity");
+    Route::post('checkout', "VisitorController@checkout");
 
     Route::group(['prefix' => "order"], function () {
         Route::post('add', "OrderController@add");
@@ -28,16 +31,25 @@ Route::group(['prefix' => "payment"], function () {
 
 Route::group(['prefix' => "user"], function () {
     Route::post('login', "UserController@login");
+    Route::post('register', "UserController@register");
     Route::post('logout', "UserController@logout");
     Route::post('home', "UserController@home");
     Route::post('update', "UserController@update");
     Route::post('profile', "UserController@profile");
     Route::post('premium', "UserController@getPremium");
+    Route::post('otp', "UserController@otpAuth");
 
     Route::post('forget-password', "UserController@forgetPassword");
 
     Route::group(['prefix' => "order"], function () {
         Route::post('/', 'UserController@order');
+    });
+
+    Route::group(['prefix' => "banner"], function () {
+        Route::post('/', 'BannerController@get');
+        Route::post('store', 'BannerController@store');
+        Route::post('delete', 'BannerController@delete');
+        Route::post('priority', 'BannerController@priority');
     });
 });
 

@@ -12,6 +12,9 @@ class UserController extends Controller
     public static function getByToken($token) {
         return User::where('token', $token);
     }
+    public static function getByID($id) {
+        return User::where('id', $id);
+    }
 
     public function login(Request $request) {
         $user = null;
@@ -63,6 +66,7 @@ class UserController extends Controller
 
         return view('homepage', [
             'user' => $user,
+            'accent_color' => $user->accent_color,
             'category' => $category,
             'request' => $request,
             'products' => $products,
@@ -75,6 +79,7 @@ class UserController extends Controller
 
         return view('product', [
             'user' => $user,
+            'accent_color' => $user->accent_color,
             'product' => $product,
         ]);
     }
@@ -89,6 +94,7 @@ class UserController extends Controller
         
         return view('cart', [
             'user' => $user,
+            'accent_color' => $user->accent_color,
             'carts' => $carts,
         ]);
     }

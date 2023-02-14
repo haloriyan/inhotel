@@ -4,6 +4,7 @@ img.cover { object-fit: cover; }
 .d-none { display: none; }
 .d-inline-block { display: inline-block; }
 .index-2 { z-index: 2; }
+pre { white-space: pre-wrap; }
 
 div {
     transition: 0.3s;

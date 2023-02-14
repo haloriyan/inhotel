@@ -53,6 +53,31 @@ class UserController extends Controller
             'user' => $user
         ]);
     }
+    public function register(Request $request) {
+        $username = Str::random(8);
+        $token = Str::random(32);
+
+        $saveData = User::create([
+            'name' => $request->name,
+            'username' => $username,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'photo' => "default",
+            'cover' => "default",
+            'accent_color' => "#dd1210",
+            'font_family' => "Inter",
+            'is_active' => 0,
+            'token' => $token
+        ]);
+
+        OtpController::send($saveData, 'register');
+
+        return response()->json([
+            'token' => $token,
+            'action' => 'register',
+            'status' => 200
+        ]);
+    }
     public function forgetPassword(Request $request) {
         $user = User::where('email', $request->email)->first();
         if ($user == "") {
@@ -63,6 +88,26 @@ class UserController extends Controller
         } else {
             OtpController::send($user, 'password');
         }
+    }
+    public function otpAuth(Request $request) {
+        $code = $request->code;
+        $authenticated = OtpController::auth($code, $request->token);
+
+        $status = 500;
+        if ($authenticated) {
+            $status = 200;
+
+            if ($authenticated->method == "register") {
+                $activateUser = ControllersUserController::getByToken($request->token)->update([
+                    'is_active' => 1,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'otp' => $authenticated
+        ]);
     }
     public function update(Request $request) {
         $query = User::where('token', $request->token);
@@ -137,7 +182,7 @@ class UserController extends Controller
         }
         $newExpiration = $startDate->addMonths($monthQuantity);
 
-        $externalID = "DHID_".Str::random(24);
+        $externalID = "DHID_SUBS_".Str::random(12);
         $secretKey = env('XENDIT_MODE') == 'sandbox' ? env('XENDIT_SECRET_KEY_SANDBOX') : env('XENDIT_SECRET_KEY');
 
         Xendit::setApiKey($secretKey);
@@ -150,7 +195,7 @@ class UserController extends Controller
                 'given_names' => $user->name,
                 'email' => $user->email,
             ],
-            'success_redirect_url' => "https://app.dailyhotels.id/premium/done",
+            'success_redirect_url' => "https://app.dailyhotels.id/premium/done?uid=" . $user->id,
         ]);
 
         $savePremium = UserPremium::create([

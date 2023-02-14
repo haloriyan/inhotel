@@ -12,4 +12,8 @@ class Otp extends Model
     protected $fillable = [
         'user_id', 'code', 'method', 'has_used', 'expiry'
     ];
+
+    public function user() {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
 }

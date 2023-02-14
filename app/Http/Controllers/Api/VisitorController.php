@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\OrderController as ApiOrderController;
 use App\Models\Visitor;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisitorController as ControllersVisitorController;
+use App\Mail\VisitorCheckout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class VisitorController extends Controller
 {
@@ -48,5 +53,67 @@ class VisitorController extends Controller
             'status' => 200,
             'visitors' => $visitors,
         ]);
+    }
+    public function cart(Request $request) {
+        $carts = OrderController::get([
+            ['visitor_id', $request->visitor_id],
+            ['user_id', $request->user_id],
+            ['is_placed', 0]
+        ])
+        ->with(['product.images'])
+        ->get();
+
+        return response()->json([
+            'carts' => $carts
+        ]);
+    }
+    public function cartQuantity(Request $request) {
+        $data = OrderController::get([['id', $request->id]]);
+        $cart = $data->with('product')->first();
+        if ($request->action == "increase") {
+            $newQuantity = $cart->quantity + 1;
+        } else {
+            $newQuantity = $cart->quantity - 1;
+        }
+        $newPrice = $newQuantity * $cart->product->price;
+        $updateCart = $data->update([
+            'quantity' => $newQuantity,
+            'total' => $newPrice,
+        ]);
+
+        return response()->json(['ok']);
+    }
+    public function checkout(Request $request) {
+        $cartQuery = OrderController::get([
+            ['visitor_id', $request->visitor_id],
+            ['user_id', $request->user_id],
+            ['is_placed', 0]
+        ]);
+        
+        $carts = $cartQuery->with(['user', 'visitor'])->get();
+        $visitor = $carts[0]->visitor;
+        $user = $carts[0]->user;
+
+        $total = $carts->sum('total');
+        $invoice = ApiOrderController::createPayment([
+            'visitor' => $visitor,
+            'user' => $user,
+            'total' => $total,
+            'redirect_url' => "https://app.dailyhotels.id/payment/done?uid=".$user->id."&vid=" . $visitor->id
+        ]);
+
+        $checkingOut = $cartQuery->update([
+            'is_placed' => 1,
+            'payment_id' => $invoice->id,
+        ]);
+
+        return response()->json([
+            'payment' => $invoice,
+        ]);
+
+        // Mail::to($visitor->email)->send(new VisitorCheckout([
+        //     'visitor' => $visitor,
+        //     'carts' => $carts
+        // ]));
     }
 }
