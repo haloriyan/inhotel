@@ -39,7 +39,10 @@ class ReportController extends Controller
         ]);
     }
     public function revenueToWithdraw(Request $request) {
-        $user = UserController::getByToken($request->token)->with(['banks', 'withdraws.bank'])->first();
+        $userQuery = UserController::getByToken($request->token);
+        $isPremium = UserController::isPremium($userQuery);
+        $fee = $isPremium ? 2 : 5;
+        $user = $userQuery->with(['banks', 'withdraws.bank'])->first();
         $amount = 0;
 
         $datas = Payment::where([
@@ -48,6 +51,7 @@ class ReportController extends Controller
             ['status', 1]
         ]);
         $amount = $datas->sum('grand_total');
+        $amount = $fee / 100 * $amount;
 
         return response()->json([
             'status' => 200,

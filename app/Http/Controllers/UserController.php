@@ -16,6 +16,21 @@ class UserController extends Controller
     public static function getByID($id) {
         return User::where('id', $id);
     }
+    public static function isPremium($instance) {
+        $user = $instance->with('premium')->first();
+
+        if ($user->premium !== null) {
+            if ($user->premium->status == "success") {
+                $now = Carbon::now();
+                $activeUntil = Carbon::parse($user->premium->active_until);
+                return $now <= $activeUntil;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     public function login(Request $request) {
         $user = null;

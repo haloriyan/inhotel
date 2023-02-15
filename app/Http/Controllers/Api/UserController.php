@@ -259,9 +259,11 @@ class UserController extends Controller
         ]);
     }
     public function withdraw(Request $request) {
-        $user = ControllersUserController::getByToken($request->token)->first();
+        $userQuery = ControllersUserController::getByToken($request->token);
+        $user = $userQuery->first();
         $bank = BankController::get([['id', $request->bank_id]])->first();
         $amount = 0;
+        $fee = ControllersUserController::isPremium($userQuery) ? 2 : 5; // in percent
 
         $datas = Payment::where([
             ['user_id', $user->id],
@@ -270,6 +272,8 @@ class UserController extends Controller
         ]);
 
         $amount = $datas->get()->sum('grand_total');
+        $amount = $fee / 100 * $amount;
+
         $datas->update([
             'has_withdrawn' => 1,
         ]);
