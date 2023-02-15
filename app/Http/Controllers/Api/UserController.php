@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\BankController;
 use Str;
 use Hash;
 use App\Models\User;
 use App\Models\UserPremium;
 use App\Models\VisitorOrder as Order;
+use App\Models\Payment;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\UserController as ControllersUserController;
+use App\Models\UserWithdraw;
 use Carbon\Carbon;
 use Xendit\Xendit as Xendit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
@@ -79,14 +83,23 @@ class UserController extends Controller
         ]);
     }
     public function forgetPassword(Request $request) {
-        $user = User::where('email', $request->email)->first();
+        $u = User::where('email', $request->email);
+        $user = $u->first();
         if ($user == "") {
             return response()->json([
                 'status' => 500,
                 'message' => "Kami tidak dapat menemukan akun Anda"
             ]);
         } else {
-            OtpController::send($user, 'password');
+            $otp = OtpController::send($user, 'password');
+            $token = Str::random(32);
+            $update = $u->update(['token' => $token]);
+            
+            return response()->json([
+                'token' => $token,
+                'action' => 'password',
+                'status' => 200
+            ]);
         }
     }
     public function otpAuth(Request $request) {
@@ -107,6 +120,15 @@ class UserController extends Controller
         return response()->json([
             'status' => $status,
             'otp' => $authenticated
+        ]);
+    }
+    public function resendOtp(Request $request) {
+        $user = ControllersUserController::getByToken($request->token)->first();
+        $resend = OtpController::resend($user);
+        
+        return response()->json([
+            'status' => 200,
+            'otp' => $resend
         ]);
     }
     public function update(Request $request) {
@@ -220,12 +242,91 @@ class UserController extends Controller
     }
     public function order(Request $request) {
         $user = ControllersUserController::getByToken($request->token)->first();
-        $orders = Order::where('user_id', $user->id)
-        ->with(['product.images', 'visitor'])
-        ->get();
+        $filter = [['user_id', $user->id]];
+        $query = Order::where($filter);
+        $search = $request->search;
+        
+        $orders = $query->with(['product.images', 'visitor']);
+        if ($search != "") {
+            $orders = $orders->whereHas('visitor', function ($query) use ($search) {
+                $query->where('name', 'LIKE', '%'.$search.'%');
+            });
+        }
+        $orders = $orders->get();
 
         return response()->json([
             'orders' => $orders,
+        ]);
+    }
+    public function withdraw(Request $request) {
+        $user = ControllersUserController::getByToken($request->token)->first();
+        $bank = BankController::get([['id', $request->bank_id]])->first();
+        $amount = 0;
+
+        $datas = Payment::where([
+            ['user_id', $user->id],
+            ['has_withdrawn', 0],
+            ['status', 1]
+        ]);
+
+        $amount = $datas->get()->sum('grand_total');
+        $datas->update([
+            'has_withdrawn' => 1,
+        ]);
+
+        $referenceID = "DHID_".$user->id;
+        $idempotencyKey = Str::random(12);
+        $secretKey = env('XENDIT_MODE') == 'sandbox' ? env('XENDIT_SECRET_KEY_SANDBOX') : env('XENDIT_SECRET_KEY');
+
+        $httpRequest = Http::withBasicAuth($secretKey, '')
+        ->withHeaders([
+            'Idempotency-key' => $idempotencyKey
+        ])
+        ->post('https://api.xendit.co/v2/payouts', [
+            'reference_id' => $referenceID,
+            'channel_code' => "ID_" . $bank->bank_code,
+            'channel_properties' => [
+                'account_holder_name' => $bank->account_name,
+                'account_number' => $bank->account_number
+            ],
+            'amount' => intval($amount),
+            'description' => "Contoh payout",
+            'currency' => "IDR"
+        ]);
+        
+        $response = json_decode($httpRequest->body());
+
+        $saveData = UserWithdraw::create([
+            'user_id' => $user->id,
+            'bank_id' => $bank->id,
+            'withdraw_id' => $response->id,
+            'amount' => $amount,
+            'status' => $response->status,
+            'eta' => $response->estimated_arrival_time
+        ]);
+
+        return response()->json([
+            'status' => 200,
+        ]);
+    }
+    public function checkWithdraw(Request $request) {
+        $data = UserWithdraw::where('id', $request->id);
+        $withdraw = $data->first();
+
+        $secretKey = env('XENDIT_MODE') == 'sandbox' ? env('XENDIT_SECRET_KEY_SANDBOX') : env('XENDIT_SECRET_KEY');
+        $response = Http::withBasicAuth($secretKey, '')
+        ->get('https://api.xendit.co/v2/payouts/' . $withdraw->withdraw_id);
+
+        $res = json_decode($response->body());
+        
+        if ($withdraw->status != $res->status) {
+            $data->update(['status' => $res->status]);
+        }
+        $withdraw = $data->with(['bank'])->first();
+
+        return response()->json([
+            'status' => 200,
+            'withdraw' => $withdraw
         ]);
     }
 }

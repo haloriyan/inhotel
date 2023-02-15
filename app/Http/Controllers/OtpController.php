@@ -28,6 +28,16 @@ class OtpController extends Controller
             'otp' => $saveData
         ]));
     }
+    public static function resend($user) {
+        $otp = Otp::where('user_id', $user->id)->latest()->first();
+
+        $sendMail = Mail::to($user->email)->send(new OtpMailer([
+            'user' => $user,
+            'otp' => $otp
+        ]));
+
+        return $otp;
+    }
     public static function auth($code, $token) {
         $now = Carbon::now()->format('Y-m-d H:i:s');
         $user = UserController::getByToken($token)->first();

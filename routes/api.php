@@ -23,10 +23,15 @@ Route::group(['prefix' => "visitor"], function () {
 
 Route::group(['prefix' => "report"], function () {
     Route::post('/', "ReportController@summary");
+    Route::post('payment', "ReportController@payment");
+    Route::post('payment/detail', "ReportController@paymentDetail");
+    Route::post('revenue-withdraw', "ReportController@revenueToWithdraw");
 });
 
 Route::group(['prefix' => "payment"], function () {
     Route::post('callback', "OrderController@paymentCallback");
+    Route::post('withdraw', "UserController@withdraw");
+    Route::post('withdraw/check', "UserController@checkWithdraw");
 });
 
 Route::group(['prefix' => "user"], function () {
@@ -38,6 +43,7 @@ Route::group(['prefix' => "user"], function () {
     Route::post('profile', "UserController@profile");
     Route::post('premium', "UserController@getPremium");
     Route::post('otp', "UserController@otpAuth");
+    Route::post('otp-resend', "UserController@resendOtp");
 
     Route::post('forget-password', "UserController@forgetPassword");
 
@@ -84,4 +90,5 @@ Route::group(['prefix' => "gallery"], function () {
 
 Route::group(['prefix' => "export"], function () {
     Route::post('visitor', "ExportController@visitor");
+    Route::post('revenue', "ExportController@revenue");
 });

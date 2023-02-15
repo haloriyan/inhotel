@@ -17,4 +17,7 @@ class Payment extends Model
     public function items() {
         return $this->hasMany(\App\Models\VisitorOrder::class, 'payment_id');
     }
+    public function visitor() {
+        return $this->belongsTo(\App\Models\Visitor::class, 'visitor_id');
+    }
 }

@@ -55,7 +55,7 @@
                 <label for="phone">No. Whatsapp</label>
             </div>
 
-            <button class="primary w-100 mt-2">Kirim</button>
+            <button class="primary w-100 mt-2" style="background-color: {{ $accent_color }}">Kirim</button>
         </form>
     </div>
 </div>

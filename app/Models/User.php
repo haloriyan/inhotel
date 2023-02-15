@@ -50,4 +50,10 @@ class User extends Authenticatable
     public function premium() {
         return $this->hasOne(\App\Models\UserPremium::class, 'user_id')->latest();
     }
+    public function banks() {
+        return $this->hasMany(\App\Models\Bank::class, 'user_id');
+    }
+    public function withdraws() {
+        return $this->hasMany(\App\Models\UserWithdraw::class, 'user_id');
+    }
 }

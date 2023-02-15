@@ -53,7 +53,7 @@
 
     <div class="ProductArea mt-3">
         @foreach ($products as $product)
-            <a href="{{ route('user.product', [$user->username, $product->id]) }}" class="text black">
+            <a href="{{ route('user.product', [$user->username, $product->id]) }}" class="text black" onclick="productLink(event)">
                 <div class="product-item flex row ">
                     <img src="{{ asset('storage/product_images/' . $product->images[0]->filename) }}" class="product-image">
                     <div class="flex grow-1 column shrink-1 ml-2">
@@ -91,5 +91,11 @@
             select(".TopBar").classList.remove('active');
         }
     });
+
+    const productLink = e => {
+        if (e.target.tagName == 'BUTTON') {
+            e.preventDefault();
+        }
+    }
 </script>
 @endsection
