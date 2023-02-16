@@ -56,4 +56,7 @@ class User extends Authenticatable
     public function withdraws() {
         return $this->hasMany(\App\Models\UserWithdraw::class, 'user_id');
     }
+    public function banners() {
+        return $this->hasMany(\App\Models\Banner::class, 'user_id');
+    }
 }

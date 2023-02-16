@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return bcrypt('inikatasandi');
 });
-Route::get('test', "Api\UserController@isPremium");
+Route::get('test', "Api\UserController@gpt");
 Route::get('getpo', "UserController@getPayout");
 
 Route::get('payment/done', "VisitorController@paymentDone");

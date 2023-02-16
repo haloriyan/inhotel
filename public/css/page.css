@@ -105,6 +105,13 @@ img {
     object-fit: cover;
 }
 
+.badge {
+    position: fixed;
+    top: 20px;right: 20px;
+    z-index: 5;
+    font-size: 12px;
+}
+
 @media (max-width: 480px) {
     .TopBar,.container,.bottom-control {
         left: 0%;right: 0%;

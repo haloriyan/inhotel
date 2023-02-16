@@ -2,10 +2,34 @@
 
 @section('title', "Dailyhotels")
 
+@section('head.dependencies')
+<style>
+    #TopCartButton {
+        width: 45px;
+        height: 45px;
+        padding: 0px;
+        background: none;
+        position: absolute;
+        left: 10px;top: 10px;
+        color: #fff;
+        border-radius: 99px;
+        opacity: 0.75;
+    }
+    #TopCartButton span {
+        font-size: 12px;
+    }
+    #TopCartButton:hover { opacity: 1; }
+</style>
+@endsection
+
 @section('content')
 <input type="hidden" id="category" value="{{ $category }}">
 
+<button id="TopCartButton" onclick="redirect(['cart'])" style="background: {{ $user->accent_color }}">
+    <span class="material-icons">shopping_cart</span>
+</button>
 <img src="{{ asset('storage/user_covers/' . $user->cover) }}" alt="Cover" class="cover">
+
 <div class="ProfileArea">
     <div class="text center">
         <img src="{{ asset('storage/user_photos/' . $user->photo) }}" class="photo">
@@ -24,6 +48,15 @@
 </div>
 
 <div class="padding-on-mobile">
+    @if ($banners->count() > 0)
+        <div class="ImagesArea mt-2" style="height: 120px;">
+            @foreach ($banners as $image)
+                <a href="{{ $image->link }}" target="_blank">
+                    <img src="{{ asset('storage/banner_images/' . $image->filename) }}" alt="">
+                </a>
+            @endforeach
+        </div>
+    @endif
     <div class="CategoryArea mt-2 bordered p-2 pl-0 pr-0 flex row item-center justify-center">
         <div class="flex column grow-1 item-center pointer" style="color: {{ $category == '' ? $user->accent_color : '#444' }}" onclick="chooseCategory('')">
             <ion-icon name="business-outline"></ion-icon>
@@ -64,7 +97,7 @@
                             </div>
                             <button 
                                 onclick="addToCart('{{ $product->id }}')"
-                                class="small" 
+                                class="text small" 
                                 style="background: {{ $accent_color }};color: #fff;"
                             >
                                 + Keranjang

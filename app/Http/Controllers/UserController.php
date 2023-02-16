@@ -79,6 +79,10 @@ class UserController extends Controller
 
         $products = ProductController::get($filter)->with('images')->get();
         $galleries = GalleryController::get([['user_id', $user->id]])->with('images')->get();
+        $banners = BannerController::get([['user_id', $user->id]])
+        ->orderBy('priority', 'DESC')
+        ->orderBy('created_at', 'DESC')
+        ->get();
 
         return view('homepage', [
             'user' => $user,
@@ -87,6 +91,7 @@ class UserController extends Controller
             'request' => $request,
             'products' => $products,
             'galleries' => $galleries,
+            'banners' => $banners,
         ]);
     }
     public function product($username, $id) {

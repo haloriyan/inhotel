@@ -60,4 +60,35 @@ class ProductController extends Controller
 
         return response()->json(['message' => "ok"]);
     }
+    public function update(Request $request) {
+        $query = ControllersProductController::get([['id', $request->id]]);
+        $product = $query->with('images')->first();
+
+        $toUpdate = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+        ];
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $saveImage = ControllersProductController::saveImage($product->id, $image);
+            }
+        }
+        
+        if ($request->image_to_delete != "") {
+            $imagesToDelete = explode(",", $request->image_to_delete);
+            foreach ($imagesToDelete as $image) {
+                $deleteImage = ControllersProductController::deleteImage($product->id, $image);
+            }
+        }
+        $updateData = $query->update($toUpdate);
+
+        return response()->json([
+            'status' => 200,
+            'message' => "ok"
+        ]);
+
+        // if ($request->)
+    }
 }

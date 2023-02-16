@@ -70,16 +70,26 @@ class VisitorController extends Controller
     public function cartQuantity(Request $request) {
         $data = OrderController::get([['id', $request->id]]);
         $cart = $data->with('product')->first();
+        $isDeleting = false;
+
         if ($request->action == "increase") {
             $newQuantity = $cart->quantity + 1;
         } else {
-            $newQuantity = $cart->quantity - 1;
+            if ($cart->quantity == 1) {
+                $deleteData = $data->delete();
+                $isDeleting = true;
+            } else {
+                $newQuantity = $cart->quantity - 1;
+            }
         }
-        $newPrice = $newQuantity * $cart->product->price;
-        $updateCart = $data->update([
-            'quantity' => $newQuantity,
-            'total' => $newPrice,
-        ]);
+        
+        if (!$isDeleting) {
+            $newPrice = $newQuantity * $cart->product->price;
+            $updateCart = $data->update([
+                'quantity' => $newQuantity,
+                'total' => $newPrice,
+            ]);
+        }
 
         return response()->json(['ok']);
     }
@@ -106,6 +116,13 @@ class VisitorController extends Controller
             'is_placed' => 1,
             'payment_id' => $invoice->id,
         ]);
+
+        // update booking date
+        foreach ($request->bookdate as $i => $dt) {
+            OrderController::get([
+                ['id', $carts[$i]->id]
+            ])->update(['book_date' => $dt]);
+        }
 
         return response()->json([
             'payment' => $invoice,

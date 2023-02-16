@@ -44,6 +44,7 @@ Route::group(['prefix' => "user"], function () {
     Route::post('premium', "UserController@getPremium");
     Route::post('otp', "UserController@otpAuth");
     Route::post('otp-resend', "UserController@resendOtp");
+    Route::post('scan', "UserController@scan");;
 
     Route::post('forget-password', "UserController@forgetPassword");
 
@@ -73,6 +74,7 @@ Route::group(['prefix' => "bank"], function () {
 Route::group(['prefix' => "product"], function () {
     Route::post('store', "ProductController@store");
     Route::post('delete', "ProductController@delete");
+    Route::post('update', "ProductController@update");
     Route::post('visibility', "ProductController@visibility");
     Route::get('{id}', "ProductController@get");
 });

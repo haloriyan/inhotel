@@ -13,11 +13,13 @@ class BannerController extends Controller
         $user = UserController::getByToken($request->token)->first();
         $banners = ControllersBannerController::get([['user_id', $user->id]])
         ->orderBy('priority', 'DESC')->orderBy('created_at', 'DESC')->get();
+        $canAdd = $banners->count() < config('inhotel')['basic_limitation']['banner_images'] ? true : false;
 
         return response()->json([
             'status' => 200,
             'message' => "Berhasil mengambil banner",
-            'banners' => $banners
+            'banners' => $banners,
+            'can_add' => $canAdd
         ]);
     }
     public function store(Request $request) {

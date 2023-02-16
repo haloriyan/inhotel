@@ -26,15 +26,24 @@ class ReportController extends Controller
 
         $counters['visitor'] = $visitorQuery->whereBetween('created_at', [$startDate, $endDate])
         ->get('id');
-        $counters['revenue'] = Order::where([
+        $counters['revenue'] = Payment::where([
             ['user_id', $user->id],
+            ['status', 1]
             // ['is_placed', 1]
         ])
         ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()->sum('total');
+        ->get()->sum('grand_total');
+
+        $orders = Payment::where([
+            ['user_id', $user->id],
+            ['status', 1]
+        ])
+        ->with(['visitor', 'items.product.images'])
+        ->orderBy('created_at', 'DESC')->take(5)->get();
 
         return response()->json([
             'visitors' => $visitors,
+            'orders' => $orders,
             'counters' => $counters,
         ]);
     }
@@ -51,7 +60,8 @@ class ReportController extends Controller
             ['status', 1]
         ]);
         $amount = $datas->sum('grand_total');
-        $amount = $fee / 100 * $amount;
+        $commission = $fee / 100 * $amount;
+        $amount = $amount - $commission;
 
         return response()->json([
             'status' => 200,

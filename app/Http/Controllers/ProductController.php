@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Storage;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
@@ -49,5 +50,17 @@ class ProductController extends Controller
         ]);
 
         return $saveData;
+    }
+    public static function deleteImage($productID, $filename) {
+        $query = ProductImage::where([
+            ['product_id', $productID],
+            ['filename', $filename]
+        ]);
+        $image = $query->first();
+
+        $deleteData = $query->delete();
+        $deleteImage = Storage::delete('public/product_images/' . $image->filename);
+
+        return true;
     }
 }

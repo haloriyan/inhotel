@@ -1,3 +1,6 @@
+@php
+    $ff = explode("|", $user->font_family);
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +15,7 @@
     <link rel="stylesheet" href="{{ asset('css/base/button.css') }}">
     <link rel="stylesheet" href="{{ asset('css/base/modal.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    @include('components.FontSettings', ['ff' => $ff])
     <link rel="stylesheet" href="{{ asset('css/page.css') }}">
     @yield('head.dependencies')
 </head>
@@ -32,6 +36,11 @@
         </div>
     </div>
 </header>
+
+<div class="badge d-none row item-center rounded p-2 bg-green">
+    <div id="message">Berhasil menambahkan produk ke keranjang</div>
+    <div class="material-icons ml-1 pointer" onclick="removeBadge()">clear</div>
+</div>
 
 <div class="container absolute">
     @yield('content')
@@ -93,6 +102,23 @@
 
         e.preventDefault();
     }
+    let badgeTimeout = null;
+    const removeBadge = () => {
+        let badge = select(".badge");
+        badge.classList.remove('flex');
+        badge.classList.add('d-none');
+    }
+    const showBadge = (message, color = '#2ecc71') => {
+        clearTimeout(badgeTimeout);
+        let badge = select(".badge");
+        badge.classList.remove('d-none');
+        badge.classList.add('flex');
+        badge.style.backgroundColor = color;
+        select(".badge #message").innerHTML = message;
+        badgeTimeout = setTimeout(() => {
+            removeBadge();
+        }, 5000);
+    }
 
     const loadCart = () => {
         post("/api/visitor/cart", {
@@ -100,7 +126,6 @@
             user_id: user.id
         })
         .then(res => {
-            console.log(res);
             let count = 0;
             res.carts.forEach(cart => {
                 count += cart.quantity;
@@ -116,6 +141,7 @@
         })
         .then(res => {
             loadCart();
+            showBadge(res.message);
         })
     }
     loadCart();

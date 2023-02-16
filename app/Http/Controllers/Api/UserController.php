@@ -10,6 +10,7 @@ use App\Models\UserPremium;
 use App\Models\VisitorOrder as Order;
 use App\Models\Payment;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SocialController;
@@ -135,10 +136,17 @@ class UserController extends Controller
         $query = User::where('token', $request->token);
         $user = $query->first();
 
-        $toUpdate = [
-            'name' => $request->name,
-            'bio' => $request->bio,
-        ];
+        if ($request->section == "appearance") {
+            $toUpdate = [
+                'accent_color' => $request->accent_color,
+                'font_family' => $request->font_family,
+            ];
+        } else {
+            $toUpdate = [
+                'name' => $request->name,
+                'bio' => $request->bio,
+            ];
+        }
 
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
@@ -157,10 +165,12 @@ class UserController extends Controller
         }
 
         $updateUser = $query->update($toUpdate);
+        $user = $query->first();
 
         return response()->json([
             'status' => 200,
-            'message' => "Berhasil memperbarui profile"
+            'message' => "Berhasil memperbarui profile",
+            'user' => $user,
         ]);
     }
     public function home(Request $request) {
@@ -246,7 +256,7 @@ class UserController extends Controller
         $query = Order::where($filter);
         $search = $request->search;
         
-        $orders = $query->with(['product.images', 'visitor']);
+        $orders = $query->with(['product.images', 'visitor', 'payment']);
         if ($search != "") {
             $orders = $orders->whereHas('visitor', function ($query) use ($search) {
                 $query->where('name', 'LIKE', '%'.$search.'%');
@@ -331,6 +341,45 @@ class UserController extends Controller
         return response()->json([
             'status' => 200,
             'withdraw' => $withdraw
+        ]);
+    }
+    public function gpt() {
+        $key = "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";
+
+        $request = Http::withToken($key)->post('https://api.openai.com/v1/moderations', [
+            'input' => 'i want to fuck her and kill her boyfriend',
+        ]);
+
+        $response = json_decode($request->body());
+        // return $response;
+        dd($response);
+    }
+    public function scan(Request $request) {
+        $code = $request->code; // scheme {payment_id}-{order_id}
+        $c = explode("|", $code);
+        $now = Carbon::now()->format('Y-m-d');
+
+        $data = OrderController::get([['id', $c[1]]]);
+        $order = $data->with('visitor')->first();
+
+        if ($order->has_used == 0) {
+            if ($order->book_date == $now) {
+                $useOrder = $data->update(['has_used' => 1]);
+                $message = "Berhasil check in (".$order->visitor->name.")";
+                $status = 200;
+            } else {
+                $bookDate = Carbon::parse($order->book_date)->isoFormat('D MMM Y');
+                $message = "Check in gagal. Tanggal yang dibooking " . $bookDate;
+                $status = 500;
+            }
+        } else {
+            $status = 500;
+            $message = "Check in gagal. Kode ini sudah pernah digunakan";
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message
         ]);
     }
 }
